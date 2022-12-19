@@ -8,7 +8,7 @@ operator_map = operator.OperatorMap([
     operator.Operator(2, '-', Processor.subtract)
 ])
 
-p = processor.Processor(parser.Parser(operator_map), operator_map)
+p = processor.Processor(parser.Parser(operator_map))
 
 running = True
 while running:

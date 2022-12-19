@@ -2,12 +2,10 @@ from core.operation import Operation
 
 
 class Processor:
-    operator_map = None
     parser = None
 
-    def __init__(self, parser, operator_map):
+    def __init__(self, parser):
         self.parser = parser
-        self.operator_map = operator_map
 
     def process(self, expressions):
         self.parser.result = None
@@ -23,7 +21,8 @@ class Processor:
         if isinstance(right, Operation):
             right = self.calculate(right)
 
-        return operation.operator.action(left, right)
+        res = operation.operator.action(left, right)
+        return res
 
     @staticmethod
     def sum(left, right):

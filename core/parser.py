@@ -1,3 +1,4 @@
+import json
 import re
 import string
 
@@ -17,24 +18,24 @@ class Parser:
         result = re.search(r"\(([^\(]*?)\)", expression)
         while result is not None:
             parser = Parser(self.operators)
-
             parser.parse(result.group(1))
             pointer = Parser.get_var_name()
 
             Parser.variables[pointer] = parser.result
-            expression = expression.replace(f"{result.group(0)}", pointer)
+            expression = expression.replace(result.group(0), pointer)
             result = result.re.search(expression)
 
-        for item in self.operators.list_by_priority():
-            pattern = fr'(?P<left>\w+)\s?(?P<operator>\{item.definition})\s?(?P<right>\w+)'
-            result = re.finditer(pattern, expression)
+        groups = self.operators.group_by_priority()
+        for group in groups.values():
+            definitions = "\\".join(map(lambda op: op.definition, group))
 
-            if result is None:
-                continue
+            pattern = fr'(?P<left>\w+)\s?(?P<operator>[\{definitions}])\s?(?P<right>\w+)'
+            regex = re.compile(pattern)
+            result = regex.search(expression)
 
-            for match in result:
-                left_operand = match.group('left')
-                right_operand = match.group('right')
+            while result:
+                left_operand = result.group('left')
+                right_operand = result.group('right')
 
                 if left_operand in Parser.variables:
                     left_operand = Parser.variables[left_operand]
@@ -46,14 +47,19 @@ class Parser:
                 else:
                     right_operand = int(right_operand)
 
+                item = self.operators.find_by_definition(result.group('operator'))
                 o = operation.Operation([left_operand, right_operand], item)
                 name = Parser.generate_var_name()
 
                 Parser.variables[name] = o
                 self.result = o
 
-                expression = re.sub(match.re, name, expression, 1)
-                self.parse(expression)
+                expression = re.sub(result.re, name, expression, 1)
+                result = regex.search(expression)
+
+        if expression not in Parser.variables:
+            # In the end, expression will be shortened to one replacement. This one replacement is the whole operation.
+            self.parse(expression)
 
         return self.result
 

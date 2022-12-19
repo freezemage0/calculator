@@ -13,3 +13,5 @@ class Operation:
         left, right = self.operands
         return f"{str(left)} {self.operator} {str(right)}"
 
+    def __repr__(self):
+        return str(self)
