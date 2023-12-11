@@ -29,7 +29,7 @@ class Parser:
         for group in groups.values():
             definitions = "\\".join(map(lambda op: op.definition, group))
 
-            pattern = fr'(?P<left>\w+)\s?(?P<operator>[\{definitions}])\s?(?P<right>\w+)'
+            pattern = fr'(?P<left>-?\d*\.?\d+)\s?(?P<operator>[\{definitions}])\s?(?P<right>-?\d*\.?\d+)'
             regex = re.compile(pattern)
             result = regex.search(expression)
 
@@ -40,12 +40,12 @@ class Parser:
                 if left_operand in Parser.variables:
                     left_operand = Parser.variables[left_operand]
                 else:
-                    left_operand = int(left_operand)
+                    left_operand = float(left_operand)
 
                 if right_operand in Parser.variables:
                     right_operand = Parser.variables[right_operand]
                 else:
-                    right_operand = int(right_operand)
+                    right_operand = float(right_operand)
 
                 item = self.operators.find_by_definition(result.group('operator'))
                 o = operation.Operation([left_operand, right_operand], item)

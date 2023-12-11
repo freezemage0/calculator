@@ -3,6 +3,7 @@ from core.processor import Processor
 
 operator_map = operator.OperatorMap([
     operator.Operator(1, '*', Processor.multiply),
+    operator.Operator(1, '^', Processor.power),
     operator.Operator(1, '/', Processor.divide),
     operator.Operator(2, '+', Processor.sum),
     operator.Operator(2, '-', Processor.subtract)

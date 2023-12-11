@@ -42,3 +42,7 @@ class Processor:
             raise ZeroDivisionError
 
         return left / right
+
+    @staticmethod
+    def power(left, right):
+        return left ** right
